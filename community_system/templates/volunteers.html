@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Volunteers - Community Contribution Tracking{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-person-badge"></i> Volunteers (Individual Accounts)</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">Add New Volunteer</div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_volunteer') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Name *</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus"></i> Add Volunteer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Volunteer List ({{ volunteers|length }})</div>
+            <div class="card-body">
+                {% if volunteers %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr><th>Name</th><th>Contact</th><th>Total Hours</th><th>Total Cash</th><th>Total Material</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for v in volunteers %}
+                        <tr>
+                            <td><strong>{{ v.name }}</strong></td>
+                            <td>{{ v.phone or v.email or '-' }}</td>
+                            <td>{{ "%.1f"|format(v.total_hours) }} hrs</td>
+                            <td>${{ "%.2f"|format(v.total_cash) }}</td>
+                            <td>${{ "%.2f"|format(v.total_material) }}</td>
+                            <td>
+                                <a href="{{ url_for('view_volunteer', vol_id=v.id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                                <form method="POST" action="{{ url_for('delete_volunteer', vol_id=v.id) }}" class="d-inline" onsubmit="return confirm('Delete this volunteer?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="text-muted text-center py-4">No volunteers yet</p>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Reports - Community Contribution Tracking{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-bar-chart"></i> Quarterly Reports</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Generate Report</div>
+            <div class="card-body">
+                {% if quarters %}
+                <form method="POST" action="{{ url_for('generate_report') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Select Quarter</label>
+                        <select name="quarter" class="form-select" required>
+                            <option value="">-- Select Quarter --</option>
+                            {% for q in quarters %}<option value="{{ q }}">{{ q }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-file-earmark-bar-graph"></i> Generate Report</button>
+                </form>
+                {% else %}
+                <p class="text-muted">No data available. Please add events first.</p>
+                <a href="{{ url_for('add_event') }}" class="btn btn-primary">Add Event</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Report Contents</div>
+            <div class="card-body">
+                <p>The quarterly report includes:</p>
+                <ul>
+                    <li>All events in the quarter</li>
+                    <li>Total volunteer hours</li>
+                    <li>Total cash donations</li>
+                    <li>Total material value</li>
+                    <li>Participant statistics</li>
+                    <li>Breakdown by event type</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

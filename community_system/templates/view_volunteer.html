@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ volunteer.name }} - Community Contribution Tracking{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-badge"></i> {{ volunteer.name }}</h2>
+    <a href="{{ url_for('volunteer_list') }}" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">Contact Information</div>
+            <div class="card-body">
+                <p><strong>Phone:</strong> {{ volunteer.phone or '-' }}</p>
+                <p><strong>Email:</strong> {{ volunteer.email or '-' }}</p>
+                <p><strong>Address:</strong> {{ volunteer.address or '-' }}</p>
+                <p><strong>Notes:</strong> {{ volunteer.notes or '-' }}</p>
+                <p class="text-muted"><small>Added: {{ volunteer.created_at[:10] if volunteer.created_at else '-' }}</small></p>
+            </div>
+        </div>
+        
+        <div class="card bg-success text-white">
+            <div class="card-header">Cumulative Contributions</div>
+            <div class="card-body">
+                <h4>{{ "%.1f"|format(totals.total_hours) }} hours</h4>
+                <p class="mb-1">Cash: ${{ "%.2f"|format(totals.total_cash) }}</p>
+                <p class="mb-1">Material: ${{ "%.2f"|format(totals.total_material) }}</p>
+                <hr>
+                <h5>Total: ${{ "%.2f"|format(totals.total_cash + totals.total_material) }}</h5>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Contribution History ({{ contributions|length }})</div>
+            <div class="card-body">
+                {% if contributions %}
+                <table class="table">
+                    <thead><tr><th>Date</th><th>Event</th><th>Hours</th><th>Cash</th><th>Material</th><th>Value</th></tr></thead>
+                    <tbody>
+                        {% for c in contributions %}
+                        <tr>
+                            <td>{{ c.event_date }}</td>
+                            <td><a href="{{ url_for('view_event', event_id=c.event_id) }}">{{ c.event_name }}</a></td>
+                            <td>{{ c.volunteer_hours }} hrs</td>
+                            <td>${{ "%.2f"|format(c.cash_donation) }}</td>
+                            <td>{{ c.material_description or '-' }}</td>
+                            <td>${{ "%.2f"|format(c.material_value) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="text-muted">No contribution history</p>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

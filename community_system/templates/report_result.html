@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ quarter }} Report - Community Contribution Tracking{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-file-earmark-bar-graph"></i> {{ quarter }} Quarterly Report</h2>
+    <div>
+        <button onclick="window.print()" class="btn btn-outline-primary"><i class="bi bi-printer"></i> Print</button>
+        <a href="{{ url_for('reports') }}" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">{{ total_events }}</h3>
+                <small class="text-muted">Events</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">{{ total_participants }}</h3>
+                <small class="text-muted">Participants</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">{{ "%.1f"|format(total_hours) }}</h3>
+                <small class="text-muted">Volunteer Hours</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-warning">${{ "%.2f"|format(total_cash) }}</h3>
+                <small class="text-muted">Cash Donations</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-danger">${{ "%.2f"|format(total_material) }}</h3>
+                <small class="text-muted">Material Value</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">Event Details</div>
+            <div class="card-body">
+                {% if events %}
+                <table class="table table-sm">
+                    <thead><tr><th>Date</th><th>Event Name</th><th>Type</th><th>Participants</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td>{{ event.event_date }}</td>
+                            <td>{{ event.event_name }}</td>
+                            <td>{{ event.event_type_name or '-' }}</td>
+                            <td>{{ event.actual_participants }}</td>
+                            <td><span class="badge {{ 'bg-success' if event.status == 'Completed' else 'bg-warning' }}">{{ event.status }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="text-muted">No events in this quarter</p>{% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">By Event Type</div>
+            <div class="card-body">
+                {% if by_type %}
+                <table class="table table-sm">
+                    <thead><tr><th>Type</th><th>Count</th><th>Participants</th></tr></thead>
+                    <tbody>
+                        {% for item in by_type %}
+                        <tr>
+                            <td>{{ item.name or 'Uncategorized' }}</td>
+                            <td>{{ item.count }}</td>
+                            <td>{{ item.participants }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="text-muted">No data</p>{% endif %}
+            </div>
+        </div>
+        
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h6>Total Contribution Value</h6>
+                <h2>${{ "%.2f"|format(total_cash + total_material) }}</h2>
+                <small>Cash + Material</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .sidebar, .btn, nav { display: none !important; }
+    .col-md-10 { width: 100% !important; margin: 0 !important; }
+}
+</style>
+{% endblock %}
